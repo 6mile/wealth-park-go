@@ -25,11 +25,10 @@ var (
 // It has a Gin engine, public routes and private routes
 // that require a user session.
 type Server struct {
-	Engine        *gin.Engine
-	PublicRouter  *gin.RouterGroup
-	PrivateRouter *gin.RouterGroup
-	Addr          string
-	ServerID      string
+	Engine       *gin.Engine
+	PublicRouter *gin.RouterGroup
+	Addr         string
+	ServerID     string
 }
 
 // NewServerArgs is passed to NewServer.

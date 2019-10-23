@@ -29,7 +29,7 @@ func NewProductModel() *ProductModel {
 			created_at BIGINT NOT NULL,
 			updated_at BIGINT NOT NULL,
 			is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
-			name VARCHAR(255) NOT NULL,
+			name VARCHAR(255) NOT NULL UNIQUE,
 			PRIMARY KEY ( id )
 		) ENGINE=InnoDB`,
 		},

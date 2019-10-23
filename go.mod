@@ -7,6 +7,7 @@ require (
 	github.com/gin-contrib/gzip v0.0.1
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-sql-driver/mysql v1.4.1
+	github.com/jinzhu/gorm v1.9.11
 	github.com/pkg/errors v0.8.1
 	github.com/rs/xid v1.2.1
 	github.com/stretchr/testify v1.4.0

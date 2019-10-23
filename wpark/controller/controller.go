@@ -29,7 +29,7 @@ func Fail(c *gin.Context, code int, err error) {
 	apiserver.APIError(c, code, err)
 }
 
-// SetupEndpoint adds an endpoint to the given API server.
-func SetupEndpoint(s *apiserver.Server, e Endpoint) {
-	s.PublicRouter.Handle(e.Method, e.RelativePath, e.Handler)
+// SetupHTTPHandlers sets up http handlers on the given api server.
+func SetupHTTPHandlers(s *apiserver.Server) {
+	s.PublicRouter.Handle("POST", "/api/v1/product", ProductController.CreateProductV1)
 }

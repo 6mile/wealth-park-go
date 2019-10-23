@@ -19,11 +19,7 @@ type ProductControllerTestData struct {
 }
 
 func NewProductControllerTestData() *ProductControllerTestData {
-	_ = apiserver.GetTestServer(func(s *apiserver.Server) {
-		for _, e := range ProductController.Endpoints() {
-			SetupEndpoint(s, e)
-		}
-	})
+	apiserver.GetTestServer(SetupHTTPHandlers)
 
 	t := ProductControllerTestData{}
 
