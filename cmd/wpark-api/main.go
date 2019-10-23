@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"flag"
 	"os"
 
@@ -63,11 +62,6 @@ func main() {
 
 // initDB deletes all existing tables and recreates them.
 func initDB(be *backend.Backend) error {
-	ctx := context.Background()
-
-	if err := be.Models.Product.CreateTable(ctx, true); err != nil {
-		return err
-	}
-
+	be.CreateTables()
 	return nil
 }

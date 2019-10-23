@@ -2,6 +2,8 @@ package backend
 
 import (
 	// Blank import the mysql driver.
+	"context"
+
 	_ "github.com/go-sql-driver/mysql"
 
 	"github.com/yashmurty/wealth-park/wpark/apiserver"
@@ -64,4 +66,18 @@ func (b *Backend) wireControllers() {
 	util.EnsureNoNilPointers(
 		con.ProductController,
 	)
+}
+
+// CreateTables creates the tables.
+func (b *Backend) CreateTables() {
+	ctx := context.Background()
+	var err error
+	panicOnError := func() {
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	err = b.Models.Product.CreateTable(ctx, true)
+	panicOnError()
 }
