@@ -1,0 +1,24 @@
+# Use root/example as user/password credentials
+version: "3.1"
+
+services:
+  wpark-mysql1:
+    image: mysql:5.7.23
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    hostname: wpark-mysql1
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: wpark
+    ports:
+      - 13306:3306
+
+  wpark-phpmyadmin1:
+    depends_on:
+      - wpark-mysql1
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 13080:80
+    environment:
+      PMA_HOST: wpark-mysql1
