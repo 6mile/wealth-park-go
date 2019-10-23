@@ -35,7 +35,7 @@ func NewProductServiceTestData() *ProductServiceTestData {
 func TestCreateProduct(t *testing.T) {
 	d := NewProductServiceTestData()
 
-	t.Run("should succeed and create banner", func(t *testing.T) {
+	t.Run("should succeed and create product", func(t *testing.T) {
 		// Mocked model function runs successfully.
 		d.model.CreateFn = func(ctx context.Context, d *core.Product) error { return nil }
 
