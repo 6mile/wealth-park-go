@@ -58,18 +58,3 @@ func (s *productController) CreateProductV1(c *gin.Context) {
 type ProductResponseV1 struct {
 	Product *core.Product `json:"product"`
 }
-
-func (s *productController) Endpoints() []Endpoint {
-	return []Endpoint{
-		Endpoint{
-			Method:       "POST",
-			RelativePath: "/api/v1/product",
-			Description:  "create a product",
-			Request: CreateProductRequestV1{
-				Name: "name for the product",
-			},
-			Response: CreateProductResponseV1{Product: ExampleData.Product},
-			Handler:  ProductController.CreateProductV1,
-		},
-	}
-}
