@@ -16,7 +16,7 @@ type ProductModel struct {
 }
 
 var (
-// _ core.ProductModel = &ProductModel{}
+	_ core.ProductModel = &ProductModel{}
 )
 
 // NewProductModel ...

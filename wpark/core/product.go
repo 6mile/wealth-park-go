@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"errors"
 
 	"github.com/yashmurty/wealth-park/wpark/pkg/util"
@@ -12,6 +13,17 @@ Product can be purchased.
 type Product struct {
 	Resource
 	Name string `json:"name"`
+}
+
+// ProductModel describes data layer operations related to products.
+type ProductModel interface {
+	Create(context.Context, *Product) error
+	Model
+}
+
+// ProductService describes business logic operations related to products.
+type ProductService interface {
+	CreateProduct(context.Context, *Product) error
 }
 
 // NewProductArgs ...
