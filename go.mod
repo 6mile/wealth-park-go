@@ -12,6 +12,7 @@ require (
 	github.com/rs/xid v1.2.1
 	github.com/stretchr/testify v1.4.0
 	github.com/yashmurty/m-rec v0.0.0-20190814061928-4964b8bd2c05
+	go.elastic.co/apm v1.5.0 // indirect
 	go.uber.org/zap v1.11.0
 	gopkg.in/go-playground/validator.v9 v9.29.1
 )

@@ -129,3 +129,78 @@ func (s *PurchaserProductModel) Create(ctx context.Context, d *core.PurchaserPro
 
 	return nil
 }
+
+// ListIncludeProduct can create dynamic sql queries based on search conditions.
+func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context) (
+	all []*core.PurchaserProduct, err error) {
+	method := "list include product"
+	start := time.Now().UTC()
+	var values []interface{}
+	var prepString string
+	prepString = `SELECT * FROM ` + s.tableName
+
+	stmt, err := db.PrepareContext(ctx, prepString)
+	if err != nil {
+		log.Error(mysqlTag+": error",
+			zap.Error(err),
+			zap.String("table", s.tableName),
+			zap.String("method", method),
+		)
+		return all, errors.Wrapf(err, mysqlTag+": "+method+" failed in %s. Could not prepare db statement", s.tableName)
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.QueryContext(ctx, values...)
+	if err != nil {
+		log.Error(mysqlTag+": error",
+			zap.Error(err),
+			zap.String("table", s.tableName),
+			zap.String("method", method),
+		)
+		return all, errors.Wrapf(err, mysqlTag+": "+method+" failed in %s. Could not query db statement", s.tableName)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		d := core.PurchaserProduct{}
+
+		err = rows.Scan(
+			&d.ID,
+			&d.CreatedAt,
+			&d.UpdatedAt,
+			&d.IsDeleted,
+			&d.PurchaserID,
+			&d.ProductID,
+			&d.PurchaseTimestamp,
+		)
+		if err != nil {
+			log.Error(mysqlTag+": error",
+				zap.Error(err),
+				zap.String("table", s.tableName),
+				zap.String("method", method),
+			)
+			return all, errors.Wrapf(err, mysqlTag+": "+method+" failed in %s. Could not scan rows in result", s.tableName)
+		}
+
+		all = append(all, &d)
+	}
+	// Any error encountered during iteration.
+	if err = rows.Err(); err != nil {
+		if err != nil {
+			log.Error(mysqlTag+": error",
+				zap.Error(err),
+				zap.String("table", s.tableName),
+				zap.String("method", method),
+			)
+			return all, errors.Wrapf(err, mysqlTag+": "+method+" failed in %s. Could not iterate rows in result", s.tableName)
+		}
+	}
+
+	log.Info(mysqlTag+": "+method+" successfull",
+		zap.String("table", s.tableName),
+		zap.String("method", method),
+		zap.String("took", time.Since(start).String()),
+		zap.Int("total", len(all)),
+	)
+
+	return
+}
