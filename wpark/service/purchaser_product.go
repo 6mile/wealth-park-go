@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/pkg/errors"
 
@@ -53,13 +52,9 @@ func (s *PurchaserProductService) ListPurchaserProduct(ctx context.Context,
 	dateOnlyProduct := make(core.DateOnlyProduct)
 
 	for _, pp := range all {
-		fmt.Println("pp : ", pp)
-
 		dateOnlyProduct[pp.DateOnly] = append(
 			dateOnlyProduct[pp.DateOnly], core.ProductName{ProductName: pp.ProductName})
 	}
-	fmt.Println("dateOnlyProduct : ", dateOnlyProduct)
-
 	list := &core.ListPurchasesWithProductCustom{}
 	list.Purchases = dateOnlyProduct
 	return list, nil

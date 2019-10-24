@@ -63,7 +63,9 @@ func TestListPurchaserProduct(t *testing.T) {
 	require.Equal(t, 200, resp.Code)
 
 	require.Equal(t, http.StatusOK, resp.Code)
-	require.Equal(t, 2, len(out2.PurchaserProducts))
+	require.Equal(t, 2, len(out2.Purchases))
+
+	out3 := &controller.ListPurchaserProductResponseV1{}
 
 	query := url.Values{}
 	query.Set("start_date", time.Now().AddDate(0, 0, -10).Format("2006-01-02"))
@@ -71,7 +73,7 @@ func TestListPurchaserProduct(t *testing.T) {
 	querystring := query.Encode()
 
 	// Call the api.
-	resp, _ = CallAPI("GET", "/api/v1/purchaser/"+testPurchaser1.ID+"/product?"+querystring, "", nil, out2)
+	resp, _ = CallAPI("GET", "/api/v1/purchaser/"+testPurchaser1.ID+"/product?"+querystring, "", nil, out3)
 	require.Equal(t, 200, resp.Code)
-	require.Equal(t, 1, len(out2.PurchaserProducts))
+	require.Equal(t, 1, len(out3.Purchases))
 }
