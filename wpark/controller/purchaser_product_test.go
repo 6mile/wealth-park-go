@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"net/url"
 	"testing"
 	"time"
 
@@ -16,7 +17,7 @@ import (
 type PurchaserProductControllerTestData struct {
 	c                 *purchaserProductController
 	svc               *mock.PurchaserProductService
-	PurchaserProduct1 *core.PurchaserProduct
+	purchaserProduct1 *core.PurchaserProduct
 }
 
 func NewPurchaserProductControllerTestData() *PurchaserProductControllerTestData {
@@ -24,7 +25,7 @@ func NewPurchaserProductControllerTestData() *PurchaserProductControllerTestData
 
 	t := PurchaserProductControllerTestData{}
 
-	t.PurchaserProduct1, _ = core.NewPurchaserProduct(core.NewPurchaserProductArgs{
+	t.purchaserProduct1, _ = core.NewPurchaserProduct(core.NewPurchaserProductArgs{
 		ID:                "PURCHASER-PRODUCT-1",
 		PurchaserID:       "PURCHASER-1",
 		ProductID:         "PRODUCT-1",
@@ -52,7 +53,7 @@ func TestCreatePurchaserProductV1(t *testing.T) {
 	t.Run("should succeed and create purchaser_product", func(t *testing.T) {
 		// Mocked service function runs successfully.
 		d.svc.CreatePurchaserProductFn = func(ctx context.Context, b *core.PurchaserProduct) error {
-			require.Equal(t, d.PurchaserProduct1.PurchaserID, b.PurchaserID)
+			require.Equal(t, d.purchaserProduct1.PurchaserID, b.PurchaserID)
 			return nil
 		}
 
@@ -80,4 +81,80 @@ func TestCreatePurchaserProductV1(t *testing.T) {
 		require.Contains(t, w.Body.String(), "Bad Request")
 	})
 
+}
+
+func TestListPurchaserProductV1(t *testing.T) {
+	d := NewPurchaserProductControllerTestData()
+
+	out := ListPurchaserProductResponseV1{}
+
+	t.Run("should succeed and create purchaser_product", func(t *testing.T) {
+		// Mocked service function runs successfully.
+		query := url.Values{}
+		query.Set("start_date", "2019-01-01")
+		query.Set("end_date", "2019-12-31")
+		querystring := query.Encode()
+
+		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+			require.Equal(t, purchaserID, "WAT")
+			return []*core.PurchaserProduct{d.purchaserProduct1}, nil
+		}
+
+		w, _ := apiserver.CallAPI("GET", "/api/v1/purchaser/WAT/product?"+querystring, nil, &out)
+		require.Equal(t, http.StatusOK, w.Code)
+		require.NotEmpty(t, out.PurchaserProducts)
+	})
+
+	t.Run("should fail since date format is wrong", func(t *testing.T) {
+		query := url.Values{}
+		query.Set("start_date", "1")
+		query.Set("end_date", "2019-12-31")
+		querystring := query.Encode()
+		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+			require.Equal(t, purchaserID, "WAT")
+			return []*core.PurchaserProduct{d.purchaserProduct1}, nil
+		}
+
+		w, _ := apiserver.CallAPI("GET", "/api/v1/purchaser/WAT/product?"+querystring, nil, &out)
+		require.Equal(t, 400, w.Code)
+		require.Contains(t, w.Body.String(), "Field validation")
+
+		query = url.Values{}
+		query.Set("start_date", "1234512345")
+		query.Set("end_date", "2019-12-31")
+		querystring = query.Encode()
+		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+			require.Equal(t, purchaserID, "WAT")
+			return []*core.PurchaserProduct{d.purchaserProduct1}, nil
+		}
+
+		w, _ = apiserver.CallAPI("GET", "/api/v1/purchaser/WAT/product?"+querystring, nil, &out)
+		require.Equal(t, 400, w.Code)
+		require.Contains(t, w.Body.String(), "cannot parse")
+
+		query = url.Values{}
+		query.Set("start_date", "2019-12-31")
+		query.Set("end_date", "1234512345")
+		querystring = query.Encode()
+		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+			require.Equal(t, purchaserID, "WAT")
+			return []*core.PurchaserProduct{d.purchaserProduct1}, nil
+		}
+
+		w, _ = apiserver.CallAPI("GET", "/api/v1/purchaser/WAT/product?"+querystring, nil, &out)
+		require.Equal(t, 400, w.Code)
+		require.Contains(t, w.Body.String(), "cannot parse")
+	})
+
+	t.Run("should fail since service function returns error", func(t *testing.T) {
+		// Mocked service function returns an error.
+		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+			require.Equal(t, purchaserID, "WAT")
+			return []*core.PurchaserProduct{}, errors.New("Bad Request")
+		}
+
+		w, _ := apiserver.CallAPI("GET", "/api/v1/purchaser/WAT/product", nil, &out)
+		require.Equal(t, 400, w.Code)
+		require.Contains(t, w.Body.String(), "Bad Request")
+	})
 }

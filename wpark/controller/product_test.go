@@ -15,7 +15,7 @@ import (
 type ProductControllerTestData struct {
 	c        *productController
 	svc      *mock.ProductService
-	Product1 *core.Product
+	product1 *core.Product
 }
 
 func NewProductControllerTestData() *ProductControllerTestData {
@@ -23,7 +23,7 @@ func NewProductControllerTestData() *ProductControllerTestData {
 
 	t := ProductControllerTestData{}
 
-	t.Product1, _ = core.NewProduct(core.NewProductArgs{
+	t.product1, _ = core.NewProduct(core.NewProductArgs{
 		ID:   "PRODUCT-1",
 		Name: "Test product 1 name",
 	})
@@ -47,7 +47,7 @@ func TestCreateProductV1(t *testing.T) {
 	t.Run("should succeed and create product", func(t *testing.T) {
 		// Mocked service function runs successfully.
 		d.svc.CreateProductFn = func(ctx context.Context, b *core.Product) error {
-			require.Equal(t, d.Product1.Name, b.Name)
+			require.Equal(t, d.product1.Name, b.Name)
 			return nil
 		}
 

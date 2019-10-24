@@ -34,4 +34,5 @@ func SetupHTTPHandlers(s *apiserver.Server) {
 	s.PublicRouter.Handle("POST", "/api/v1/product", ProductController.CreateProductV1)
 	s.PublicRouter.Handle("POST", "/api/v1/purchaser", PurchaserController.CreatePurchaserV1)
 	s.PublicRouter.Handle("POST", "/api/v1/purchaser-product", PurchaserProductController.CreatePurchaserProductV1)
+	s.PublicRouter.Handle("GET", "/api/v1/purchaser/:purchaser_id/product", PurchaserProductController.ListPurchaserProductV1)
 }

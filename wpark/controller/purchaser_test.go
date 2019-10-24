@@ -15,7 +15,7 @@ import (
 type PurchaserControllerTestData struct {
 	c          *purchaserController
 	svc        *mock.PurchaserService
-	Purchaser1 *core.Purchaser
+	purchaser1 *core.Purchaser
 }
 
 func NewPurchaserControllerTestData() *PurchaserControllerTestData {
@@ -23,7 +23,7 @@ func NewPurchaserControllerTestData() *PurchaserControllerTestData {
 
 	t := PurchaserControllerTestData{}
 
-	t.Purchaser1, _ = core.NewPurchaser(core.NewPurchaserArgs{
+	t.purchaser1, _ = core.NewPurchaser(core.NewPurchaserArgs{
 		ID:   "PURCHASER-1",
 		Name: "Test purchaser 1 name",
 	})
@@ -47,7 +47,7 @@ func TestCreatePurchaserV1(t *testing.T) {
 	t.Run("should succeed and create purchaser", func(t *testing.T) {
 		// Mocked service function runs successfully.
 		d.svc.CreatePurchaserFn = func(ctx context.Context, b *core.Purchaser) error {
-			require.Equal(t, d.Purchaser1.Name, b.Name)
+			require.Equal(t, d.purchaser1.Name, b.Name)
 			return nil
 		}
 
