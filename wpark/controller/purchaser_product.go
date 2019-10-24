@@ -112,7 +112,10 @@ func (s *purchaserProductController) ListPurchaserProductV1(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, ListPurchaserProductResponseV1{
-		PurchaserProducts: all,
-	})
+	resp := ListPurchaserProductResponseV1{PurchaserProducts: all}
+	if resp.PurchaserProducts == nil {
+		resp.PurchaserProducts = make([]*core.PurchaserProduct, 0)
+	}
+	c.JSON(http.StatusOK, resp)
+
 }
