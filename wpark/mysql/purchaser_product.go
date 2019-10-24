@@ -34,7 +34,9 @@ func NewPurchaserProductModel() *PurchaserProductModel {
 			purchase_timestamp BIGINT NOT NULL,
 			PRIMARY KEY ( id ),
 			CONSTRAINT FOREIGN KEY (purchaser_id)
-			REFERENCES wpark_purchaser (id)
+			REFERENCES wpark_purchaser (id),
+			CONSTRAINT FOREIGN KEY (product_id)
+			REFERENCES wpark_product (id)
 		) ENGINE=InnoDB`,
 		},
 	}
