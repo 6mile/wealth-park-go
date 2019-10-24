@@ -81,9 +81,9 @@ func CallAPI(method, path, token string, in, out interface{}) (*httptest.Respons
 	return w, status
 }
 
-func createTestPurchaserData() *core.Purchaser {
+func createTestPurchaserData(name string) *core.Purchaser {
 	in := &controller.CreatePurchaserRequestV1{
-		Name: "E2E - Test product name 1",
+		Name: name,
 	}
 	out := &controller.CreatePurchaserResponseV1{}
 
@@ -95,9 +95,9 @@ func createTestPurchaserData() *core.Purchaser {
 	return out.Purchaser
 }
 
-func createTestProductData() *core.Product {
+func createTestProductData(name string) *core.Product {
 	in := &controller.CreateProductRequestV1{
-		Name: "E2E - Test product name 1",
+		Name: name,
 	}
 	out := &controller.CreateProductResponseV1{}
 
