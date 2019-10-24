@@ -1,4 +1,4 @@
-# Design of the Wealth Parks API
+# Design of the Wealth Park API
 
 ## Terminology
 
