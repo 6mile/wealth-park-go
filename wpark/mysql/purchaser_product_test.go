@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"time"
 
@@ -75,15 +74,12 @@ func TestPurchaserProductListIncludeProduct(t *testing.T) {
 	d := NewPurchaserProductModelTestData()
 
 	t.Run("should succeed and create purchaser_product", func(t *testing.T) {
-		fmt.Println("time.Now().Unix() : ", time.Now().Unix())
-		fmt.Println("time.Now().AddDate(0, 0, -20).Unix() : ", time.Now().AddDate(0, 0, -20).Unix())
 		testPurchaserProduct2, _ := core.NewPurchaserProduct(core.NewPurchaserProductArgs{
 			ID:                "PURCHASER-PRODUCT-2",
 			PurchaserID:       d.testPurchaser2.ID,
 			ProductID:         d.testProduct2.ID,
 			PurchaseTimestamp: time.Now().AddDate(0, 0, -20).Unix(),
 		})
-		fmt.Println("testPurchaserProduct2 : ", testPurchaserProduct2)
 		// Create runs successfully.
 		err := d.model.Create(context.Background(), testPurchaserProduct2)
 		require.NoError(t, err)

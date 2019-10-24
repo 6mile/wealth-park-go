@@ -17,17 +17,32 @@ type PurchaserProduct struct {
 	PurchaseTimestamp int64  `json:"purchase_timestamp"`
 }
 
+type ListPurchaserProduct struct {
+	PurchaserProduct
+	ProductName string `json:"name"`
+	DateOnly    string `json:"date_only"`
+}
+
+type ProductName struct {
+	ProductName string `json:"product"`
+}
+type DateOnlyProduct map[string][]ProductName
+
+type ListPurchasesWithProductCustom struct {
+	Purchases DateOnlyProduct `json:"purchases"`
+}
+
 // PurchaserProductModel describes data layer operations related to purchasers.
 type PurchaserProductModel interface {
 	Create(context.Context, *PurchaserProduct) error
-	ListIncludeProduct(context.Context, string, ListIncludeProductArgs) ([]*PurchaserProduct, error)
+	ListIncludeProduct(context.Context, string, ListIncludeProductArgs) ([]*ListPurchaserProduct, error)
 	Model
 }
 
 // PurchaserProductService describes business logic operations related to purchasers.
 type PurchaserProductService interface {
 	CreatePurchaserProduct(context.Context, *PurchaserProduct) error
-	ListPurchaserProduct(context.Context, string, ListIncludeProductArgs) ([]*PurchaserProduct, error)
+	ListPurchaserProduct(context.Context, string, ListIncludeProductArgs) (*ListPurchasesWithProductCustom, error)
 }
 
 // NewPurchaserProductArgs ...

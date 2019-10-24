@@ -134,7 +134,7 @@ func (s *PurchaserProductModel) Create(ctx context.Context, d *core.PurchaserPro
 // ListIncludeProduct can create dynamic sql queries based on search conditions.
 func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context,
 	purchaserID string, sArgs core.ListIncludeProductArgs) (
-	all []*core.PurchaserProduct, err error) {
+	all []*core.ListPurchaserProduct, err error) {
 	method := "list include product"
 	start := time.Now().UTC()
 	var values []interface{}
@@ -152,10 +152,23 @@ func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context,
 	}
 
 	var prepString string
-	prepString = `SELECT * FROM ` + s.tableName + `
+	prepString = `
+	SELECT
+		ppTable.id,
+	    ppTable.created_at,
+	    ppTable.updated_at,
+	    ppTable.is_deleted,
+    	ppTable.purchaser_id,
+    	ppTable.product_id,
+    	ppTable.purchase_timestamp,
+        productTable.name,
+        DATE(FROM_UNIXTIME(ppTable.purchase_timestamp)) DateOnly
+	FROM
+		` + s.tableName + ` ppTable
+	INNER JOIN wpark_product productTable
+    	ON productTable.id = ppTable.product_id
 	WHERE ` + strings.Join(where, " AND ")
 
-	fmt.Println("prepString : ", prepString)
 	stmt, err := db.PrepareContext(ctx, prepString)
 	if err != nil {
 		log.Error(mysqlTag+": error",
@@ -178,7 +191,7 @@ func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context,
 	}
 	defer rows.Close()
 	for rows.Next() {
-		d := core.PurchaserProduct{}
+		d := core.ListPurchaserProduct{}
 
 		err = rows.Scan(
 			&d.ID,
@@ -188,6 +201,8 @@ func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context,
 			&d.PurchaserID,
 			&d.ProductID,
 			&d.PurchaseTimestamp,
+			&d.ProductName,
+			&d.DateOnly,
 		)
 		if err != nil {
 			log.Error(mysqlTag+": error",

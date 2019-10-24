@@ -10,7 +10,7 @@ import (
 type PurchaserProductService struct {
 	CreatePurchaserProductFn       func(ctx context.Context, d *core.PurchaserProduct) error
 	CreatePurchaserProductFnCalled int
-	ListPurchaserProductFn         func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error)
+	ListPurchaserProductFn         func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all *core.ListPurchasesWithProductCustom, err error)
 	ListPurchaserProductFnCalled   int
 }
 
@@ -25,7 +25,7 @@ func (s *PurchaserProductService) CreatePurchaserProduct(ctx context.Context, d 
 }
 
 // ListPurchaserProduct ...
-func (s *PurchaserProductService) ListPurchaserProduct(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+func (s *PurchaserProductService) ListPurchaserProduct(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all *core.ListPurchasesWithProductCustom, err error) {
 	s.ListPurchaserProductFnCalled++
 	return s.ListPurchaserProductFn(ctx, purchaserID, sArgs)
 }

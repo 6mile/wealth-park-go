@@ -95,14 +95,20 @@ func TestListPurchaserProductV1(t *testing.T) {
 		query.Set("end_date", "2019-12-31")
 		querystring := query.Encode()
 
-		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (*core.ListPurchasesWithProductCustom, error) {
 			require.Equal(t, purchaserID, "WAT")
-			return []*core.PurchaserProduct{d.purchaserProduct1}, nil
+			testProductName := core.ProductName{ProductName: "test product name"}
+			productNameArray := []core.ProductName{}
+			productNameArray = append(productNameArray, testProductName)
+			return &core.ListPurchasesWithProductCustom{
+				Purchases: core.DateOnlyProduct{
+					"2019-12-31": productNameArray,
+				}}, nil
 		}
 
 		w, _ := apiserver.CallAPI("GET", "/api/v1/purchaser/WAT/product?"+querystring, nil, &out)
 		require.Equal(t, http.StatusOK, w.Code)
-		require.NotEmpty(t, out.PurchaserProducts)
+		require.NotEmpty(t, out.ListPurchasesWithProductCustom)
 	})
 
 	t.Run("should fail since date format is wrong", func(t *testing.T) {
@@ -110,9 +116,15 @@ func TestListPurchaserProductV1(t *testing.T) {
 		query.Set("start_date", "1")
 		query.Set("end_date", "2019-12-31")
 		querystring := query.Encode()
-		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (*core.ListPurchasesWithProductCustom, error) {
 			require.Equal(t, purchaserID, "WAT")
-			return []*core.PurchaserProduct{d.purchaserProduct1}, nil
+			testProductName := core.ProductName{ProductName: "test product name"}
+			productNameArray := []core.ProductName{}
+			productNameArray = append(productNameArray, testProductName)
+			return &core.ListPurchasesWithProductCustom{
+				Purchases: core.DateOnlyProduct{
+					"2019-12-31": productNameArray,
+				}}, nil
 		}
 
 		w, _ := apiserver.CallAPI("GET", "/api/v1/purchaser/WAT/product?"+querystring, nil, &out)
@@ -123,9 +135,15 @@ func TestListPurchaserProductV1(t *testing.T) {
 		query.Set("start_date", "1234512345")
 		query.Set("end_date", "2019-12-31")
 		querystring = query.Encode()
-		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (*core.ListPurchasesWithProductCustom, error) {
 			require.Equal(t, purchaserID, "WAT")
-			return []*core.PurchaserProduct{d.purchaserProduct1}, nil
+			testProductName := core.ProductName{ProductName: "test product name"}
+			productNameArray := []core.ProductName{}
+			productNameArray = append(productNameArray, testProductName)
+			return &core.ListPurchasesWithProductCustom{
+				Purchases: core.DateOnlyProduct{
+					"2019-12-31": productNameArray,
+				}}, nil
 		}
 
 		w, _ = apiserver.CallAPI("GET", "/api/v1/purchaser/WAT/product?"+querystring, nil, &out)
@@ -136,9 +154,15 @@ func TestListPurchaserProductV1(t *testing.T) {
 		query.Set("start_date", "2019-12-31")
 		query.Set("end_date", "1234512345")
 		querystring = query.Encode()
-		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (*core.ListPurchasesWithProductCustom, error) {
 			require.Equal(t, purchaserID, "WAT")
-			return []*core.PurchaserProduct{d.purchaserProduct1}, nil
+			testProductName := core.ProductName{ProductName: "test product name"}
+			productNameArray := []core.ProductName{}
+			productNameArray = append(productNameArray, testProductName)
+			return &core.ListPurchasesWithProductCustom{
+				Purchases: core.DateOnlyProduct{
+					"2019-12-31": productNameArray,
+				}}, nil
 		}
 
 		w, _ = apiserver.CallAPI("GET", "/api/v1/purchaser/WAT/product?"+querystring, nil, &out)
@@ -148,9 +172,9 @@ func TestListPurchaserProductV1(t *testing.T) {
 
 	t.Run("should fail since service function returns error", func(t *testing.T) {
 		// Mocked service function returns an error.
-		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (all []*core.PurchaserProduct, err error) {
+		d.svc.ListPurchaserProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (*core.ListPurchasesWithProductCustom, error) {
 			require.Equal(t, purchaserID, "WAT")
-			return []*core.PurchaserProduct{}, errors.New("Bad Request")
+			return nil, errors.New("Bad Request")
 		}
 
 		w, _ := apiserver.CallAPI("GET", "/api/v1/purchaser/WAT/product", nil, &out)

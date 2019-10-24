@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -12,9 +13,10 @@ import (
 )
 
 type PurchaserProductServiceTestData struct {
-	svc               *PurchaserProductService
-	model             *mock.PurchaserProductModel
-	purchaserProduct1 *core.PurchaserProduct
+	svc                   *PurchaserProductService
+	model                 *mock.PurchaserProductModel
+	purchaserProduct1     *core.PurchaserProduct
+	listPurchaserProduct1 *core.ListPurchaserProduct
 }
 
 func NewPurchaserProductServiceTestData() *PurchaserProductServiceTestData {
@@ -26,6 +28,12 @@ func NewPurchaserProductServiceTestData() *PurchaserProductServiceTestData {
 		ProductID:         "PRODUCT-1",
 		PurchaseTimestamp: time.Now().Unix(),
 	})
+
+	t.listPurchaserProduct1 = &core.ListPurchaserProduct{
+		PurchaserProduct: *t.purchaserProduct1,
+		ProductName:      "Test product name 1",
+		DateOnly:         "2019-01-02",
+	}
 
 	t.svc = &PurchaserProductService{}
 
@@ -63,24 +71,27 @@ func TestListPurchaserProduct(t *testing.T) {
 
 	t.Run("should succeed and list purchase_product", func(t *testing.T) {
 		// Mocked model function runs successfully.
-		d.model.ListIncludeProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) ([]*core.PurchaserProduct, error) {
-			return []*core.PurchaserProduct{d.purchaserProduct1}, nil
+		d.model.ListIncludeProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) ([]*core.ListPurchaserProduct, error) {
+			return []*core.ListPurchaserProduct{d.listPurchaserProduct1}, nil
 		}
 
-		all, err := d.svc.ListPurchaserProduct(
+		fmt.Println("d.listPurchaserProduct1 : ", d.listPurchaserProduct1)
+
+		list, err := d.svc.ListPurchaserProduct(
 			context.Background(),
 			d.purchaserProduct1.PurchaserID,
 			core.ListIncludeProductArgs{},
 		)
 		require.NoError(t, err)
 		require.Equal(t, 1, d.model.ListIncludeProductFnCalled)
-		require.Equal(t, 1, len(all))
+		require.NotEmpty(t, list)
+		require.NotEmpty(t, list.Purchases["2019-01-02"])
 	})
 
 	t.Run("should fail since model function returns error", func(t *testing.T) {
 		// Mocked model function returns an error.
-		d.model.ListIncludeProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) ([]*core.PurchaserProduct, error) {
-			return []*core.PurchaserProduct{}, errors.New("could not list")
+		d.model.ListIncludeProductFn = func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) ([]*core.ListPurchaserProduct, error) {
+			return nil, errors.New("could not list")
 		}
 
 		_, err := d.svc.ListPurchaserProduct(

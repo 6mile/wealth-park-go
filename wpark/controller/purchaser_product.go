@@ -69,7 +69,7 @@ type ListPurchaserProductRequestV1 struct {
 
 // ListPurchaserProductResponseV1 is returned when creating a new purchaser_product.
 type ListPurchaserProductResponseV1 struct {
-	PurchaserProducts []*core.PurchaserProduct `json:"purchaser_products"`
+	core.ListPurchasesWithProductCustom
 }
 
 func (s *purchaserProductController) ListPurchaserProductV1(c *gin.Context) {
@@ -106,16 +106,13 @@ func (s *purchaserProductController) ListPurchaserProductV1(c *gin.Context) {
 		StartDateTimestamp: startDateTimestamp,
 		EndDateTimestamp:   endDateTimestamp,
 	}
-	all, err := s.svc.ListPurchaserProduct(c.Request.Context(), purchaserID, sArgs)
+	list, err := s.svc.ListPurchaserProduct(c.Request.Context(), purchaserID, sArgs)
 	if err != nil {
 		Fail(c, http.StatusBadRequest, err)
 		return
 	}
 
-	resp := ListPurchaserProductResponseV1{PurchaserProducts: all}
-	if resp.PurchaserProducts == nil {
-		resp.PurchaserProducts = make([]*core.PurchaserProduct, 0)
-	}
+	resp := ListPurchaserProductResponseV1{*list}
 	c.JSON(http.StatusOK, resp)
 
 }

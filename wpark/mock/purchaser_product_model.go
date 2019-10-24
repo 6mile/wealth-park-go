@@ -10,7 +10,7 @@ import (
 type PurchaserProductModel struct {
 	CreateFn                   func(ctx context.Context, d *core.PurchaserProduct) error
 	CreateFnCalled             int
-	ListIncludeProductFn       func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) ([]*core.PurchaserProduct, error)
+	ListIncludeProductFn       func(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) ([]*core.ListPurchaserProduct, error)
 	ListIncludeProductFnCalled int
 	BasicModel
 }
@@ -26,7 +26,7 @@ func (s *PurchaserProductModel) Create(ctx context.Context, d *core.PurchaserPro
 }
 
 // ListIncludeProduct ...
-func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) ([]*core.PurchaserProduct, error) {
+func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) ([]*core.ListPurchaserProduct, error) {
 	s.ListIncludeProductFnCalled++
 	return s.ListIncludeProductFn(ctx, purchaserID, sArgs)
 }

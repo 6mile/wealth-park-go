@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/pkg/errors"
 
@@ -40,14 +41,26 @@ func (s *PurchaserProductService) CreatePurchaserProduct(ctx context.Context, b 
 // ListPurchaserProduct ...
 func (s *PurchaserProductService) ListPurchaserProduct(ctx context.Context,
 	purchaserID string, sArgs core.ListIncludeProductArgs) (
-	all []*core.PurchaserProduct, err error) {
+	*core.ListPurchasesWithProductCustom, error) {
 	method := "list purchaser_product"
 
 	// List the purchaser_product.
-	all, err = s.model.ListIncludeProduct(ctx, purchaserID, sArgs)
+	all, err := s.model.ListIncludeProduct(ctx, purchaserID, sArgs)
 	if err != nil {
-		return all, errors.Wrapf(err, serviceTag+": "+method+" failed in %s", s.tag)
+		return nil, errors.Wrapf(err, serviceTag+": "+method+" failed in %s", s.tag)
 	}
 
-	return
+	dateOnlyProduct := make(core.DateOnlyProduct)
+
+	for _, pp := range all {
+		fmt.Println("pp : ", pp)
+
+		dateOnlyProduct[pp.DateOnly] = append(
+			dateOnlyProduct[pp.DateOnly], core.ProductName{ProductName: pp.ProductName})
+	}
+	fmt.Println("dateOnlyProduct : ", dateOnlyProduct)
+
+	list := &core.ListPurchasesWithProductCustom{}
+	list.Purchases = dateOnlyProduct
+	return list, nil
 }
