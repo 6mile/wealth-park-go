@@ -2,6 +2,7 @@ package mysql
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -74,12 +75,15 @@ func TestPurchaserProductListIncludeProduct(t *testing.T) {
 	d := NewPurchaserProductModelTestData()
 
 	t.Run("should succeed and create purchaser_product", func(t *testing.T) {
+		fmt.Println("time.Now().Unix() : ", time.Now().Unix())
+		fmt.Println("time.Now().AddDate(0, 0, -20).Unix() : ", time.Now().AddDate(0, 0, -20).Unix())
 		testPurchaserProduct2, _ := core.NewPurchaserProduct(core.NewPurchaserProductArgs{
 			ID:                "PURCHASER-PRODUCT-2",
 			PurchaserID:       d.testPurchaser2.ID,
 			ProductID:         d.testProduct2.ID,
-			PurchaseTimestamp: time.Now().Unix(),
+			PurchaseTimestamp: time.Now().AddDate(0, 0, -20).Unix(),
 		})
+		fmt.Println("testPurchaserProduct2 : ", testPurchaserProduct2)
 		// Create runs successfully.
 		err := d.model.Create(context.Background(), testPurchaserProduct2)
 		require.NoError(t, err)
@@ -95,7 +99,7 @@ func TestPurchaserProductListIncludeProduct(t *testing.T) {
 		require.NoError(t, err)
 	})
 
-	t.Run("should succeed and list purchaser", func(t *testing.T) {
+	t.Run("should succeed and list 2 purchaser_product", func(t *testing.T) {
 		// Create runs successfully.
 		all, err := d.model.ListIncludeProduct(
 			context.Background(),
@@ -103,6 +107,20 @@ func TestPurchaserProductListIncludeProduct(t *testing.T) {
 			core.ListIncludeProductArgs{},
 		)
 		require.Equal(t, 2, len(all))
+		require.NoError(t, err)
+	})
+
+	t.Run("should succeed and list 1 purchaser_product", func(t *testing.T) {
+		// Create runs successfully.
+		all, err := d.model.ListIncludeProduct(
+			context.Background(),
+			d.testPurchaser2.ID,
+			core.ListIncludeProductArgs{
+				StartDateTimestamp: time.Now().AddDate(0, 0, -1).Unix(),
+				EndDateTimestamp:   time.Now().AddDate(0, 0, 1).Unix(),
+			},
+		)
+		require.Equal(t, 1, len(all))
 		require.NoError(t, err)
 	})
 }

@@ -141,11 +141,20 @@ func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context, purchase
 
 	where = append(where, fmt.Sprintf("%s = ?", "purchaser_id"))
 	values = append(values, purchaserID)
+	if sArgs.StartDateTimestamp != 0 {
+		where = append(where, fmt.Sprintf("%s >= ?", "purchase_timestamp"))
+		values = append(values, sArgs.StartDateTimestamp)
+	}
+	if sArgs.EndDateTimestamp != 0 {
+		where = append(where, fmt.Sprintf("%s <= ?", "purchase_timestamp"))
+		values = append(values, sArgs.EndDateTimestamp)
+	}
 
 	var prepString string
 	prepString = `SELECT * FROM ` + s.tableName + `
 	WHERE ` + strings.Join(where, " AND ")
 
+	fmt.Println("prepString : ", prepString)
 	stmt, err := db.PrepareContext(ctx, prepString)
 	if err != nil {
 		log.Error(mysqlTag+": error",

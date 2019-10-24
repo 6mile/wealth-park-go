@@ -66,6 +66,6 @@ func NewPurchaserProduct(a NewPurchaserProductArgs) (*PurchaserProduct, error) {
 
 // ListIncludeProductArgs ...
 type ListIncludeProductArgs struct {
-	StartDate string `json:"start_date" binding:"omitempty,min=10,max=10"`
-	EndDate   string `json:"end_date" binding:"omitempty,min=10,max=10"`
+	StartDateTimestamp int64
+	EndDateTimestamp   int64
 }
