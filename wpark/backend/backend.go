@@ -23,12 +23,14 @@ type Backend struct {
 
 // Services contains all initialized services used by the backend.
 type Services struct {
-	Product *service.ProductService
+	Product   *service.ProductService
+	Purchaser *service.PurchaserService
 }
 
 // Models contains all initialized models used by the backend.
 type Models struct {
-	Product core.ProductModel
+	Product   core.ProductModel
+	Purchaser core.PurchaserModel
 }
 
 // NewBackendWithMYSQLModels creates a backend using all mysql based
@@ -45,6 +47,7 @@ func (b *Backend) createMYSQLModels() {
 	// Setup models.
 	mysql.SetupDBHandle()
 	b.Models.Product = mysql.NewProductModel()
+	b.Models.Purchaser = mysql.NewPurchaserModel()
 }
 
 func (b *Backend) wireServices() {
@@ -52,19 +55,26 @@ func (b *Backend) wireServices() {
 	product := service.NewProductService()
 	product.SetProductModel(b.Models.Product)
 
+	purchaser := service.NewPurchaserService()
+	purchaser.SetPurchaserModel(b.Models.Purchaser)
+
 	b.Services.Product = product
+	b.Services.Purchaser = purchaser
 
 	util.EnsureNoNilPointers(
 		b.Services.Product,
+		b.Services.Purchaser,
 	)
 }
 
 func (b *Backend) wireControllers() {
 	// Setup controllers.
 	con.ProductController.SetProductService(b.Services.Product)
+	con.PurchaserController.SetPurchaserService(b.Services.Purchaser)
 
 	util.EnsureNoNilPointers(
 		con.ProductController,
+		con.PurchaserController,
 	)
 }
 
@@ -79,5 +89,8 @@ func (b *Backend) CreateTables() {
 	}
 
 	err = b.Models.Product.CreateTable(ctx, true)
+	panicOnError()
+
+	err = b.Models.Purchaser.CreateTable(ctx, true)
 	panicOnError()
 }

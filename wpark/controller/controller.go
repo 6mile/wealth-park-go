@@ -32,4 +32,5 @@ func Fail(c *gin.Context, code int, err error) {
 // SetupHTTPHandlers sets up http handlers on the given api server.
 func SetupHTTPHandlers(s *apiserver.Server) {
 	s.PublicRouter.Handle("POST", "/api/v1/product", ProductController.CreateProductV1)
+	s.PublicRouter.Handle("POST", "/api/v1/purchaser", PurchaserController.CreatePurchaserV1)
 }

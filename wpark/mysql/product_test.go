@@ -12,8 +12,6 @@ type ProductModelTestData struct {
 	model        *ProductModel
 	testProduct1 *core.Product
 	testProduct2 *core.Product
-	testProduct3 *core.Product
-	testProduct4 *core.Product
 }
 
 func NewProductModelTestData() *ProductModelTestData {
@@ -25,25 +23,9 @@ func NewProductModelTestData() *ProductModelTestData {
 		Name: "Test product 1 name",
 	})
 
-	// Add another product which expires earlier than testProduct1.
-	// testProduct2.EndDate < testProduct1.EndDate
 	t.testProduct2, _ = core.NewProduct(core.NewProductArgs{
 		ID:   "PRODUCT-2",
 		Name: "Test product 2 name",
-	})
-
-	// Add another product which expires earlier than testProduct2.
-	// testProduct3.EndDate < testProduct2.EndDate < testProduct1.EndDate
-	t.testProduct3, _ = core.NewProduct(core.NewProductArgs{
-		ID:   "PRODUCT-3",
-		Name: "Test product 3 name",
-	})
-
-	// Add another product which expires earlier than testProduct3, but has a greater start date.
-	// testProduct4.EndDate < testProduct3.EndDate < testProduct2.EndDate < testProduct1.EndDate
-	t.testProduct4, _ = core.NewProduct(core.NewProductArgs{
-		ID:   "PRODUCT-4",
-		Name: "Test product 4 name",
 	})
 
 	t.model = NewProductModel()
@@ -81,16 +63,10 @@ func TestProductCreate(t *testing.T) {
 		require.NoError(t, err)
 	})
 
-	t.Run("should succeed and create product", func(t *testing.T) {
-		// Create runs successfully.
-		err := d.model.Create(context.Background(), d.testProduct3)
-		require.NoError(t, err)
-	})
-
-	t.Run("should succeed and create product", func(t *testing.T) {
-		// Create runs successfully.
-		err := d.model.Create(context.Background(), d.testProduct4)
-		require.NoError(t, err)
+	t.Run("should fail due to duplicate name", func(t *testing.T) {
+		// Create fails due to duplicate name.
+		err := d.model.Create(context.Background(), d.testProduct2)
+		require.Error(t, err)
 	})
 
 }
