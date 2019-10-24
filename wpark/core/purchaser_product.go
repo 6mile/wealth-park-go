@@ -20,6 +20,7 @@ type PurchaserProduct struct {
 // PurchaserProductModel describes data layer operations related to purchasers.
 type PurchaserProductModel interface {
 	Create(context.Context, *PurchaserProduct) error
+	ListIncludeProduct(context.Context, string, ListIncludeProductArgs) ([]*PurchaserProduct, error)
 	Model
 }
 
@@ -61,4 +62,10 @@ func NewPurchaserProduct(a NewPurchaserProductArgs) (*PurchaserProduct, error) {
 			UpdatedAt: util.MakeTimestamp(),
 		},
 	}, nil
+}
+
+// ListIncludeProductArgs ...
+type ListIncludeProductArgs struct {
+	StartDate string `json:"start_date" binding:"omitempty,min=10,max=10"`
+	EndDate   string `json:"end_date" binding:"omitempty,min=10,max=10"`
 }

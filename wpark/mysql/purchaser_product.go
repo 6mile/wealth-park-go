@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -131,13 +132,19 @@ func (s *PurchaserProductModel) Create(ctx context.Context, d *core.PurchaserPro
 }
 
 // ListIncludeProduct can create dynamic sql queries based on search conditions.
-func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context) (
+func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (
 	all []*core.PurchaserProduct, err error) {
 	method := "list include product"
 	start := time.Now().UTC()
 	var values []interface{}
+	var where []string
+
+	where = append(where, fmt.Sprintf("%s = ?", "purchaser_id"))
+	values = append(values, purchaserID)
+
 	var prepString string
-	prepString = `SELECT * FROM ` + s.tableName
+	prepString = `SELECT * FROM ` + s.tableName + `
+	WHERE ` + strings.Join(where, " AND ")
 
 	stmt, err := db.PrepareContext(ctx, prepString)
 	if err != nil {

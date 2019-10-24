@@ -76,7 +76,7 @@ func TestPurchaserProductListIncludeProduct(t *testing.T) {
 	t.Run("should succeed and create purchaser_product", func(t *testing.T) {
 		testPurchaserProduct2, _ := core.NewPurchaserProduct(core.NewPurchaserProductArgs{
 			ID:                "PURCHASER-PRODUCT-2",
-			PurchaserID:       d.testPurchaser1.ID,
+			PurchaserID:       d.testPurchaser2.ID,
 			ProductID:         d.testProduct2.ID,
 			PurchaseTimestamp: time.Now().Unix(),
 		})
@@ -86,7 +86,7 @@ func TestPurchaserProductListIncludeProduct(t *testing.T) {
 
 		testPurchaserProduct3, _ := core.NewPurchaserProduct(core.NewPurchaserProductArgs{
 			ID:                "PURCHASER-PRODUCT-3",
-			PurchaserID:       d.testPurchaser3.ID,
+			PurchaserID:       d.testPurchaser2.ID,
 			ProductID:         d.testProduct3.ID,
 			PurchaseTimestamp: time.Now().Unix(),
 		})
@@ -97,8 +97,12 @@ func TestPurchaserProductListIncludeProduct(t *testing.T) {
 
 	t.Run("should succeed and list purchaser", func(t *testing.T) {
 		// Create runs successfully.
-		all, err := d.model.ListIncludeProduct(context.Background())
-		require.Equal(t, 3, len(all))
+		all, err := d.model.ListIncludeProduct(
+			context.Background(),
+			d.testPurchaser2.ID,
+			core.ListIncludeProductArgs{},
+		)
+		require.Equal(t, 2, len(all))
 		require.NoError(t, err)
 	})
 }
