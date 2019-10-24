@@ -19,12 +19,12 @@ func NewPurchaserModelTestData() *PurchaserModelTestData {
 	SetupDBHandle()
 
 	t.testPurchaser1, _ = core.NewPurchaser(core.NewPurchaserArgs{
-		ID:   "PRODUCT-1",
+		ID:   "PURCHASER-1",
 		Name: "Test purchaser 1 name",
 	})
 
 	t.testPurchaser2, _ = core.NewPurchaser(core.NewPurchaserArgs{
-		ID:   "PRODUCT-2",
+		ID:   "PURCHASER-2",
 		Name: "Test purchaser 2 name",
 	})
 

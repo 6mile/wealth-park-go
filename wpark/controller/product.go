@@ -18,7 +18,7 @@ func (s *productController) SetProductService(svc core.ProductService) { s.svc =
 
 // CreateProductRequestV1 is passed when creating a new product.
 type CreateProductRequestV1 struct {
-	Name string `json:"name" binding:"omitempty,min=1,max=2048"`
+	Name string `json:"name" binding:"required,min=1,max=2048"`
 }
 
 // CreateProductResponseV1 is returned when creating a new product.
@@ -52,9 +52,4 @@ func (s *productController) CreateProductV1(c *gin.Context) {
 	c.JSON(http.StatusOK, CreateProductResponseV1{
 		Product: b,
 	})
-}
-
-// ProductResponseV1 is returned when fetching a product.
-type ProductResponseV1 struct {
-	Product *core.Product `json:"product"`
 }

@@ -18,7 +18,7 @@ func (s *purchaserController) SetPurchaserService(svc core.PurchaserService) { s
 
 // CreatePurchaserRequestV1 is passed when creating a new purchaser.
 type CreatePurchaserRequestV1 struct {
-	Name string `json:"name" binding:"omitempty,min=1,max=2048"`
+	Name string `json:"name" binding:"required,min=1,max=2048"`
 }
 
 // CreatePurchaserResponseV1 is returned when creating a new purchaser.
@@ -52,9 +52,4 @@ func (s *purchaserController) CreatePurchaserV1(c *gin.Context) {
 	c.JSON(http.StatusOK, CreatePurchaserResponseV1{
 		Purchaser: b,
 	})
-}
-
-// PurchaserResponseV1 is returned when fetching a purchaser.
-type PurchaserResponseV1 struct {
-	Purchaser *core.Purchaser `json:"purchaser"`
 }

@@ -23,14 +23,16 @@ type Backend struct {
 
 // Services contains all initialized services used by the backend.
 type Services struct {
-	Product   *service.ProductService
-	Purchaser *service.PurchaserService
+	Product          *service.ProductService
+	Purchaser        *service.PurchaserService
+	PurchaserProduct *service.PurchaserProductService
 }
 
 // Models contains all initialized models used by the backend.
 type Models struct {
-	Product   core.ProductModel
-	Purchaser core.PurchaserModel
+	Product          core.ProductModel
+	Purchaser        core.PurchaserModel
+	PurchaserProduct core.PurchaserProductModel
 }
 
 // NewBackendWithMYSQLModels creates a backend using all mysql based
@@ -48,6 +50,7 @@ func (b *Backend) createMYSQLModels() {
 	mysql.SetupDBHandle()
 	b.Models.Product = mysql.NewProductModel()
 	b.Models.Purchaser = mysql.NewPurchaserModel()
+	b.Models.PurchaserProduct = mysql.NewPurchaserProductModel()
 }
 
 func (b *Backend) wireServices() {
@@ -58,12 +61,17 @@ func (b *Backend) wireServices() {
 	purchaser := service.NewPurchaserService()
 	purchaser.SetPurchaserModel(b.Models.Purchaser)
 
+	purchaserProduct := service.NewPurchaserProductService()
+	purchaserProduct.SetPurchaserProductModel(b.Models.PurchaserProduct)
+
 	b.Services.Product = product
 	b.Services.Purchaser = purchaser
+	b.Services.PurchaserProduct = purchaserProduct
 
 	util.EnsureNoNilPointers(
 		b.Services.Product,
 		b.Services.Purchaser,
+		b.Services.PurchaserProduct,
 	)
 }
 
@@ -71,10 +79,12 @@ func (b *Backend) wireControllers() {
 	// Setup controllers.
 	con.ProductController.SetProductService(b.Services.Product)
 	con.PurchaserController.SetPurchaserService(b.Services.Purchaser)
+	con.PurchaserProductController.SetPurchaserProductService(b.Services.PurchaserProduct)
 
 	util.EnsureNoNilPointers(
 		con.ProductController,
 		con.PurchaserController,
+		con.PurchaserProductController,
 	)
 }
 
@@ -92,5 +102,8 @@ func (b *Backend) CreateTables() {
 	panicOnError()
 
 	err = b.Models.Purchaser.CreateTable(ctx, true)
+	panicOnError()
+
+	err = b.Models.PurchaserProduct.CreateTable(ctx, true)
 	panicOnError()
 }
