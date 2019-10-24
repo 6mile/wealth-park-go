@@ -13,13 +13,13 @@ import (
 type ProductServiceTestData struct {
 	svc      *ProductService
 	model    *mock.ProductModel
-	Product1 *core.Product
+	product1 *core.Product
 }
 
 func NewProductServiceTestData() *ProductServiceTestData {
 	t := ProductServiceTestData{}
 
-	t.Product1, _ = core.NewProduct(core.NewProductArgs{
+	t.product1, _ = core.NewProduct(core.NewProductArgs{
 		ID:   "PRODUCT-1",
 		Name: "Test product 1 name",
 	})
@@ -39,7 +39,7 @@ func TestCreateProduct(t *testing.T) {
 		// Mocked model function runs successfully.
 		d.model.CreateFn = func(ctx context.Context, d *core.Product) error { return nil }
 
-		err := d.svc.CreateProduct(context.Background(), d.Product1)
+		err := d.svc.CreateProduct(context.Background(), d.product1)
 		require.NoError(t, err)
 		require.Equal(t, 1, d.model.CreateFnCalled)
 	})
@@ -48,7 +48,7 @@ func TestCreateProduct(t *testing.T) {
 		// Mocked model function returns an error.
 		d.model.CreateFn = func(ctx context.Context, d *core.Product) error { return errors.New("could not create") }
 
-		err := d.svc.CreateProduct(context.Background(), d.Product1)
+		err := d.svc.CreateProduct(context.Background(), d.product1)
 		require.Error(t, err)
 		require.Contains(t, err.Error(), "could not create")
 	})

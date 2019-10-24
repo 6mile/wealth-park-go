@@ -132,7 +132,8 @@ func (s *PurchaserProductModel) Create(ctx context.Context, d *core.PurchaserPro
 }
 
 // ListIncludeProduct can create dynamic sql queries based on search conditions.
-func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context, purchaserID string, sArgs core.ListIncludeProductArgs) (
+func (s *PurchaserProductModel) ListIncludeProduct(ctx context.Context,
+	purchaserID string, sArgs core.ListIncludeProductArgs) (
 	all []*core.PurchaserProduct, err error) {
 	method := "list include product"
 	start := time.Now().UTC()

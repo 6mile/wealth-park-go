@@ -27,6 +27,7 @@ type PurchaserProductModel interface {
 // PurchaserProductService describes business logic operations related to purchasers.
 type PurchaserProductService interface {
 	CreatePurchaserProduct(context.Context, *PurchaserProduct) error
+	ListPurchaserProduct(context.Context, string, ListIncludeProductArgs) ([]*PurchaserProduct, error)
 }
 
 // NewPurchaserProductArgs ...

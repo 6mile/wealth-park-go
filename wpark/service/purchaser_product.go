@@ -36,3 +36,18 @@ func (s *PurchaserProductService) CreatePurchaserProduct(ctx context.Context, b 
 
 	return nil
 }
+
+// ListPurchaserProduct ...
+func (s *PurchaserProductService) ListPurchaserProduct(ctx context.Context,
+	purchaserID string, sArgs core.ListIncludeProductArgs) (
+	all []*core.PurchaserProduct, err error) {
+	method := "list purchaser_product"
+
+	// List the purchaser_product.
+	all, err = s.model.ListIncludeProduct(ctx, purchaserID, sArgs)
+	if err != nil {
+		return all, errors.Wrapf(err, serviceTag+": "+method+" failed in %s", s.tag)
+	}
+
+	return
+}
