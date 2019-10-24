@@ -48,16 +48,6 @@ func SetupDBHandle() *sql.DB {
 		).Panic("could not connect to mysql")
 	}
 
-	// Set collation and charset on the db.
-	err = setDBCollation(c.MySQLDBName)
-	if err != nil {
-		log.With(
-			zap.Error(err),
-			zap.String("mysql_url", c.MySQLURL),
-			zap.String("mysql_db_name", c.MySQLDBName),
-		).Panic("setDBCollation failed")
-	}
-
 	return db
 }
 
@@ -81,21 +71,6 @@ func PingServer(ctx context.Context) (err error) {
 	)
 
 	return
-}
-
-// setDBCollation will set the collation and charset
-func setDBCollation(mySQLDBName string) (err error) {
-	// Set collation.
-	_, err = db.Exec(fmt.Sprintf("ALTER DATABASE %s CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;", mySQLDBName))
-	if err != nil {
-		log.With(
-			zap.Error(err),
-			zap.String("mysql_db_name", mySQLDBName),
-		).Error("could not SET COLLATE to utf8_general_ci")
-		return err
-	}
-
-	return nil
 }
 
 // CreateTable creates a MySQL table.

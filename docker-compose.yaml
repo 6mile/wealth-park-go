@@ -12,6 +12,7 @@ services:
       MYSQL_DATABASE: wpark
     ports:
       - 13306:3306
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
 
   wpark-phpmyadmin1:
     depends_on:
