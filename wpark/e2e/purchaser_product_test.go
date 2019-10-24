@@ -11,9 +11,12 @@ import (
 func TestCreatePurchaserProduct(t *testing.T) {
 	setupE2ETests()
 
+	testPurchaser := createTestPurchaserData()
+	testProduct := createTestProductData()
+
 	in := &controller.CreatePurchaserProductRequestV1{
-		PurchaserID:       "E2E-PURCHASER-1",
-		ProductID:         "E2E-PRODUCT-1",
+		PurchaserID:       testPurchaser.ID,
+		ProductID:         testProduct.ID,
 		PurchaseTimestamp: time.Now().Unix(),
 	}
 	out := &controller.CreatePurchaserProductResponseV1{}

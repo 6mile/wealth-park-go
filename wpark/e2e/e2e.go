@@ -11,6 +11,7 @@ import (
 	"github.com/yashmurty/wealth-park/wpark/apiserver"
 	"github.com/yashmurty/wealth-park/wpark/backend"
 	"github.com/yashmurty/wealth-park/wpark/controller"
+	"github.com/yashmurty/wealth-park/wpark/core"
 )
 
 var (
@@ -78,4 +79,32 @@ func CallAPI(method, path, token string, in, out interface{}) (*httptest.Respons
 	}
 
 	return w, status
+}
+
+func createTestPurchaserData() *core.Purchaser {
+	in := &controller.CreatePurchaserRequestV1{
+		Name: "E2E - Test product name 1",
+	}
+	out := &controller.CreatePurchaserResponseV1{}
+
+	resp, _ := CallAPI("POST", "/api/v1/purchaser", "", in, out)
+	if resp.Code != 200 || out.Purchaser.Name != in.Name {
+		panic("test data: could create test purchaser")
+	}
+
+	return out.Purchaser
+}
+
+func createTestProductData() *core.Product {
+	in := &controller.CreateProductRequestV1{
+		Name: "E2E - Test product name 1",
+	}
+	out := &controller.CreateProductResponseV1{}
+
+	resp, _ := CallAPI("POST", "/api/v1/product", "", in, out)
+	if resp.Code != 200 || out.Product.Name != in.Name {
+		panic("test data: could create test product")
+	}
+
+	return out.Product
 }
